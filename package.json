@@ -1,6 +1,6 @@
 {
   "name": "badcert",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "",
   "main": "index.js",
   "directories": {
@@ -24,6 +24,9 @@
   },
   "author": "scaret",
   "license": "ISC",
+  "bin": {
+    "http-server": "./bin/badcert"
+  },
   "bugs": {
     "url": "https://github.com/scaret/badcert/issues"
   },
