@@ -1,0 +1,27 @@
+{
+  "name": "simple-https-server",
+  "version": "0.0.1",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "./bin/simple-https-server",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/scaret/simple-https-server.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/scaret/simple-https-server/issues"
+  },
+  "homepage": "https://github.com/scaret/simple-https-server#readme",
+  "dependencies": {
+    "colors": "^1.4.0",
+    "http-server": "^0.12.3",
+    "minimist": "^1.2.5",
+    "opener": "^1.5.2",
+    "portfinder": "^1.0.28"
+  }
+}
