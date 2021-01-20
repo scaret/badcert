@@ -197,6 +197,7 @@ async function listen(port) {
                         let domain;
                         domain = `ip-${details.address.replace(/\./g, "-")}.wrtc.dev`;
                         const maxTry = 100;
+                        let opened = false;
                         for(let i = 0; i < maxTry; i++){
                             let addresses;
                             try{
@@ -223,6 +224,18 @@ async function listen(port) {
                                     }
                                     logger.info('open: ' + openUrl);
                                     opener(openUrl);
+                                    opened = true;
+                                }else{
+                                    setTimeout(()=>{
+                                        if (opened) return;
+                                        var openUrl = protocol + domain + ':' + port;
+                                        if (typeof argv.o === 'string') {
+                                            openUrl += argv.o[0] === '/' ? argv.o : '/' + argv.o;
+                                        }
+                                        logger.info('open: ' + openUrl);
+                                        opener(openUrl);
+                                        opened = true;
+                                    }, 5000);
                                 }
                                 break;
                             }
