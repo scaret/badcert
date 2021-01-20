@@ -1,0 +1,35 @@
+{
+  "name": "badcert",
+  "version": "1.5.0",
+  "description": "",
+  "main": "index.js",
+  "directories": {
+    "lib": "lib"
+  },
+  "dependencies": {
+    "axios": "^0.21.1",
+    "colors": "^1.4.0",
+    "http-server": "^0.12.3",
+    "minimist": "^1.2.5",
+    "opener": "^1.5.2",
+    "portfinder": "^1.0.28"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "start": "./bin/badcert",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/scaret/badcert.git"
+  },
+  "author": "scaret",
+  "license": "ISC",
+  "bin": {
+    "badcert": "./bin/badcert"
+  },
+  "bugs": {
+    "url": "https://github.com/scaret/badcert/issues"
+  },
+  "homepage": "https://github.com/scaret/badcert#readme"
+}
