@@ -29,13 +29,14 @@ function main (argv) {
         .option('--no-reload', 'disable live-reloading')
         .option('-q, --quiet', 'quiet mode with minimum log message')
         .option('-o, --open [path]', 'open browser automatically, optional path')
+        .option('--https', 'enable https')
         .option('--http2', 'enable http2 tls mode')
         .option('--historyindex <historyindex>', '404 fallback index path, used by SPA development')
         .on('--help', function () {
             console.log('  Examples:')
             console.log('')
             console.log('    $ badcert -s . -p 7000')
-            console.log('    $ badcert -s dist --http2 -o')
+            console.log('    $ badcert -s dist --https -o')
             console.log('    $ badcert -s dist --historyindex "/index.html"')
             console.log('    $ badcert -s . -w "*.js, src/** # npm run build && echo wow!"')
             console.log('    $ badcert -s . -x http://localhost:8000')
@@ -68,11 +69,11 @@ function main (argv) {
         program.serve = program.args[program.args.length - 1]
     }
 
-    if (!program.http2){
-      program.http2 = true;
+    if (!program.https){
+      program.https = true;
     }
-    else if (program.http2 === "no" || program.http2 === "false"){
-      program.http2 = false
+    else if (program.https === "no" || program.https === "false"){
+      program.https = false
     }
 
     if (!program.open){
@@ -110,6 +111,7 @@ function main (argv) {
         quiet: program.quiet,
         open: program.open,
         http2: program.http2,
+        https: program.https,
         historyindex: program.historyindex
     }
     cliOptions = JSON.parse(JSON.stringify(cliOptions)) // remove undefined properties

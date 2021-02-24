@@ -121,6 +121,20 @@ LightServer.prototype.start = async function () {
       },
       app
     )
+  }else if (_this.options.https) {
+
+    var fs = require('fs')
+    var path = require('path')
+
+    const credentials = await getCerts('127.0.0.1');
+
+    server = require('https').createServer(
+      {
+        key: fs.readFileSync(credentials.keyPath),
+        cert: fs.readFileSync(credentials.certPath)
+      },
+      app
+    )
   } else {
     server = require('http').createServer(app)
   }
