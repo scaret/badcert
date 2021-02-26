@@ -60,14 +60,14 @@ function main (argv) {
             console.log('')
         })
 
-    if (argv.length === 0) {
-        process.argv.push('--help')
-    }
-
     program.parse(process.argv)
 
-  if (!program.serve && program.args.length){
+    if (!program.serve){
+      if (program.args.length){
         program.serve = program.args[program.args.length - 1]
+      }else{
+        program.serve = process.env.PWD;
+      }
     }
 
     if (!program.https){
