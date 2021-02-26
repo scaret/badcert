@@ -57,6 +57,7 @@ LightServer.prototype.start = async function () {
   if (!_this.options.noReload) {
     _this.lr = LR({
       quiet: _this.options.quiet,
+      https: _this.options.https,
       http2: _this.options.http2
     })
     app.use(_this.lr.middleFunc)
@@ -144,7 +145,7 @@ LightServer.prototype.start = async function () {
 
       const domain = await getOneWorkingDomain();
       var listeningAddr =
-        (_this.options.http2 ? 'https://' : 'http://') +
+        ((_this.options.http2 || _this.options.https) ? 'https://' : 'http://') +
         domain +
         ':' +
         _this.options.port

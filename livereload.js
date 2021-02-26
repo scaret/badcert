@@ -53,7 +53,7 @@ var wsArray = []
 function Livereload (options) {
   if (!(this instanceof Livereload)) return new Livereload(options)
   this.options = options
-  clientJsContent = clientJsContent.replace('%WS_PROTOCOL%', this.options.http2 ? 'wss' : 'ws')
+  clientJsContent = clientJsContent.replace('%WS_PROTOCOL%', (this.options.http2 || this.options.https) ? 'wss' : 'ws')
 }
 
 Livereload.prototype.writeLog = function (logLine) {
