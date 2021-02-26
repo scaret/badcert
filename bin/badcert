@@ -8,6 +8,7 @@
 var LightServer = require('../index')
 var rc = require('../rc')
 var program = require('commander')
+var portfinder = require('portfinder')
 
 function main (argv) {
     function collect (val, memo) {
@@ -122,7 +123,15 @@ function main (argv) {
         process.exit(1)
     }
 
-    LightServer(options).start()
+    portfinder.basePort = options.port;
+    portfinder.getPort((err, port)=>{
+      if (err){
+        throw err;
+      }else{
+        options.port = port;
+        LightServer(options).start()
+      }
+    })
 }
 
 main(process.argv.slice(2))
