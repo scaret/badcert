@@ -23,6 +23,7 @@ var os = require('os').type()
 function LightServer (options) {
   if (!(this instanceof LightServer)) return new LightServer(options)
   this.options = options
+  this.id = Math.floor(Math.random() * 1e10)
   if (os === 'Windows_NT') {
     this.shell = 'cmd'
     this.firstParam = '/c'
@@ -48,6 +49,9 @@ LightServer.prototype.start = async function () {
     app.use(function (req, res, next) {
       if (req.url === '/favicon.ico') {
         next()
+      } else if (req.url === '/badcertinfo.json') {
+        res.setHeader('Content-Type', 'application/json');
+        res.end(JSON.stringify({id: _this.id}, null, 2));
       } else {
         morgan('dev')(req, res, next)
       }
@@ -143,7 +147,7 @@ LightServer.prototype.start = async function () {
   server
     .listen(_this.options.port, _this.options.bind, async function () {
 
-      const domain = await getOneWorkingDomain();
+      const domain = await getOneWorkingDomain(_this.options.port, _this.id);
       var listeningAddr =
         ((_this.options.http2 || _this.options.https) ? 'https://' : 'http://') +
         domain +
