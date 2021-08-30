@@ -8,8 +8,9 @@
 'use strict'
 
 const getCerts = require('./lib/getCerts')
-const getOneWorkingDomain = require('./lib/getOneWorkingDomain')
+const registerLocalIps = require('./lib/registerLocalIps')
 
+const axios = require('axios');
 var morgan = require('morgan')
 var connect = require('connect')
 var serveStatic = require('serve-static')
@@ -39,6 +40,7 @@ LightServer.prototype.writeLog = function (logLine) {
 
 LightServer.prototype.start = async function () {
   var _this = this
+
   if (!_this.options.serve && !_this.options.proxy) {
     _this.watch()
     return
@@ -113,16 +115,15 @@ LightServer.prototype.start = async function () {
   }
 
   var server
+  const config = await registerLocalIps();
   if (_this.options.http2) {
     var fs = require('fs')
     var path = require('path')
 
-    const credentials = await getCerts('127.0.0.1');
-
     server = require('spdy').createServer(
       {
-        key: fs.readFileSync(credentials.keyPath),
-        cert: fs.readFileSync(credentials.certPath)
+        key: fs.readFileSync(config.keyPath),
+        cert: fs.readFileSync(config.certPath)
       },
       app
     )
@@ -131,12 +132,10 @@ LightServer.prototype.start = async function () {
     var fs = require('fs')
     var path = require('path')
 
-    const credentials = await getCerts('127.0.0.1');
-
     server = require('https').createServer(
       {
-        key: fs.readFileSync(credentials.keyPath),
-        cert: fs.readFileSync(credentials.certPath)
+        key: fs.readFileSync(config.keyPath),
+        cert: fs.readFileSync(config.certPath)
       },
       app
     )
@@ -145,47 +144,35 @@ LightServer.prototype.start = async function () {
   }
 
   server
-    .listen(_this.options.port, _this.options.bind, async function () {
-
-      const domain = await getOneWorkingDomain(_this.options.port, _this.id);
-      var listeningAddr =
-        ((_this.options.http2 || _this.options.https) ? 'https://' : 'http://') +
-        domain +
-        ':' +
-        _this.options.port
-      console.log('light-server is listening at ' + listeningAddr)
-      if (_this.options.serve) {
-        _this.writeLog('  serving static dir: ' + _this.options.serve)
-        if (_this.options.servePrefix) {
-          _this.writeLog('  using prefix ' + _this.options.servePrefix)
+    .listen(_this.options.port, _this.options.bind, async () => {
+      console.log("Listening");
+      let needOpen = _this.options.open;
+      for (let ip in config.ipMap){
+        const url = `https://${config.ipMap[ip].domain}:${_this.options.port}`;
+        try{
+          const info = await axios.get(url + '/badcertinfo.json');
+          if (info.data.id === this.id){
+            console.log(`Available ${url}`);
+            if (needOpen) {
+              var opener = require('opener')
+              opener(url)
+              needOpen = false
+            }
+          }else{
+            console.log(`wrong domain  ${url} (ID ${info.data.id} should be ${instanceId})`)
+          }
+        }catch(e){
+          if (needOpen){
+            console.log(`Not available for now ${url}`, e.name, e.message, e.stack)
+          }
         }
       }
 
-      if (_this.options.proxy) {
-        _this.writeLog(
-          '  when static file not found, proxy to ' + _this.options.proxy
-        )
-        _this.writeLog(
-          '    if url path starts with "' + _this.options.proxypaths + '"'
-        )
-      }
-
-      _this.writeLog('')
       if (_this.lr) {
         _this.lr.startWS(server) // websocket shares same port with http
       }
       _this.watch()
 
-      if (_this.options.open) {
-        var opener = require('opener')
-        var openAddr = listeningAddr.replace('://0.0.0.0:', '://localhost:')
-        if (typeof _this.options.open === 'string') {
-          openAddr += _this.options.open
-        } else if (_this.options.servePrefix) {
-          openAddr += _this.options.servePrefix
-        }
-        opener(openAddr)
-      }
     })
     .on('error', function (err) {
       if (err.errno === 'EADDRINUSE') {
