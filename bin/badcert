@@ -28,6 +28,7 @@ function main (argv) {
         .option('-x, --proxy <upstreamurl>', 'when file not found, proxy the request to another server')
         .option('--proxypath <proxypath>', 'only send to proxy when path starts with this pattern, default is "/", repeatable', collect, [])
         .option('--reload', 'enable live-reloading')
+        .option('--no-reload', 'Please use --reload')
         .option('-q, --quiet', 'quiet mode with minimum log message')
         .option('-o, --open [path]', 'open browser automatically, optional path')
         .option('--https', 'enable https')
