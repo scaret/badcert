@@ -115,7 +115,7 @@ LightServer.prototype.start = async function () {
   }
 
   var server
-  const config = await registerLocalIps();
+  const config = await registerLocalIps(_this.options.ipv6);
   if (_this.options.http2) {
     var fs = require('fs')
     var path = require('path')
@@ -172,7 +172,7 @@ LightServer.prototype.start = async function () {
           }
         }catch(e){
           if (needOpen){
-            console.log(`Not available for now ${url}`, e.name, e.message, e.stack)
+            console.log(`Not available for now ${url}`)
           }
         }
       }

@@ -32,6 +32,7 @@ function main (argv) {
         .option('-o, --open [path]', 'open browser automatically, optional path')
         .option('--https', 'enable https')
         .option('--http2', 'enable http2 tls mode')
+        .option('--ipv6', 'enable ipv6')
         .option('--historyindex <historyindex>', '404 fallback index path, used by SPA development')
         .on('--help', function () {
             console.log('  Examples:')
@@ -113,6 +114,7 @@ function main (argv) {
         open: program.open,
         http2: program.http2,
         https: program.https,
+        ipv6: program.ipv6,
         historyindex: program.historyindex
     }
     cliOptions = JSON.parse(JSON.stringify(cliOptions)) // remove undefined properties
