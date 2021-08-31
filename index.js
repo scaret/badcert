@@ -145,8 +145,17 @@ LightServer.prototype.start = async function () {
 
   server
     .listen(_this.options.port, _this.options.bind, async () => {
-      console.log("Listening");
+      console.log(`Listening on port ${_this.options.port}`);
       let needOpen = _this.options.open;
+      setTimeout(()=>{
+        if (needOpen){
+          const url = `https://ip-127-0-0-1.wrtc.dev}:${_this.options.port}`;
+          console.log(url);
+          var opener = require('opener')
+          opener(url)
+          needOpen = false
+        }
+      }, 5000)
       for (let ip in config.ipMap){
         const url = `https://${config.ipMap[ip].domain}:${_this.options.port}`;
         try{
