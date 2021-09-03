@@ -152,7 +152,7 @@ LightServer.prototype.start = async function () {
           const url = `https://ip-127-0-0-1.wrtc.dev}:${_this.options.port}`;
           console.log(url);
           var opener = require('opener')
-          opener(url)
+          opener(`${url}/${typeof _this.options.open === "string" ? _this.options.open : ""}`);
           needOpen = false
         }
       }, 5000)
@@ -164,7 +164,7 @@ LightServer.prototype.start = async function () {
             console.log(`Available ${url}`);
             if (needOpen) {
               var opener = require('opener')
-              opener(url)
+              opener(`${url}/${typeof _this.options.open === "string" ? _this.options.open : ""}`);
               needOpen = false
             }
           }else{

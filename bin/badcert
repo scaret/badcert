@@ -78,7 +78,6 @@ function main (argv) {
     else if (program.https === "no" || program.https === "false"){
       program.https = false
     }
-
     if (!program.open){
       program.open = true;
     }
