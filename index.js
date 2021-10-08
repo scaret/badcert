@@ -149,7 +149,7 @@ LightServer.prototype.start = async function () {
       let needOpen = _this.options.open;
       setTimeout(()=>{
         if (needOpen){
-          const url = `https://ip-127-0-0-1.wrtc.dev}:${_this.options.port}`;
+          const url = `https://ip-127-0-0-1.wrtc.dev:${_this.options.port}`;
           console.log(url);
           var opener = require('opener')
           opener(`${url}/${typeof _this.options.open === "string" ? _this.options.open : ""}`);
