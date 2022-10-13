@@ -21,6 +21,8 @@ var LR = require('./livereload')
 var spawn = require('child_process').spawn
 var os = require('os').type()
 
+const WAIT_404_TIMEOUT = 30000
+
 function LightServer (options) {
   if (!(this instanceof LightServer)) return new LightServer(options)
   this.options = options
@@ -47,6 +49,19 @@ LightServer.prototype.start = async function () {
   }
 
   var app = connect()
+
+  let urlMap = {}
+
+  app.use(function (req, res, next){
+    if (req._parsedUrl && req._parsedUrl.pathname){
+      if ( !(urlMap[req._parsedUrl.pathname] > 0)) {
+        urlMap[req._parsedUrl.pathname] = 0
+      }
+      urlMap[req._parsedUrl.pathname]++
+    }
+    next()
+  })
+
   if (!this.options.quiet) {
     app.use(function (req, res, next) {
       if (req.url === '/favicon.ico') {
@@ -101,17 +116,51 @@ LightServer.prototype.start = async function () {
       app.use(history({ index: _this.options.historyindex }))
     }
 
-    app.use(
-      _this.options.servePrefix || '',
-      serveStatic(_this.options.serve, {
-        extensions: ['html'],
-        redirect: _this.options.serveRedirect === true,
-        fallthrough: true })
-    )
+
+    const serveStaticMiddleware = serveStatic(_this.options.serve, {
+      extensions: ['html'],
+      redirect: _this.options.serveRedirect === true,
+      fallthrough: true })
+
+    app.use(_this.options.servePrefix || '', serveStaticMiddleware)
+
     app.use(
       _this.options.servePrefix || '',
       serveIndex(_this.options.serve, { icons: true })
     )
+
+
+    app.use(async function (req, res, next){
+      if (req._parsedUrl && req._parsedUrl.pathname){
+        if ( urlMap[req._parsedUrl.pathname] >= 2) {
+          const filePath = path.join(_this.options.serve, req._parsedUrl.pathname)
+          console.log(`Hold URL for ${WAIT_404_TIMEOUT}ms: [${req.url}][${req._parsedUrl.pathname}]`)
+          urlMap[req._parsedUrl.pathname] = 0
+          let start = Date.now()
+          let exists = false
+          for (let i = 0 ; i < 1000; i++){
+            await new Promise((res)=>{
+              setTimeout(res, 100)
+            })
+            const time = Date.now() - start
+            exists = fs.existsSync(filePath)
+            if (exists){
+              console.log(`File back online\t${time}ms\t[${req.url}][${req._parsedUrl.pathname}]`)
+              serveStaticMiddleware(req, res, next)
+              return
+            }
+            if (time > WAIT_404_TIMEOUT) {
+              break
+            }
+          }
+          console.log('pass', req._parsedUrl.pathname)
+          delete urlMap[req._parsedUrl.pathname]
+        } else {
+          delete urlMap[req._parsedUrl.pathname]
+        }
+      }
+      next()
+    })
   }
 
   var server
