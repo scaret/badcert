@@ -1,9 +1,0 @@
-{
- "port": 8012,
- "serve": "public",
- "watchexps": [
-    "public/**"
- ],
- "servePrefix": "/public",
- "open": true
-}

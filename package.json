@@ -1,28 +1,12 @@
 {
   "name": "badcert",
-  "version": "4.2.0",
+  "version": "5.0-dev",
   "description": "",
   "main": "index.js",
   "directories": {
     "lib": "lib"
   },
   "dependencies": {
-    "axios": "^0.21.1",
-    "commander": "^6.0.0",
-    "connect": "^3.7.0",
-    "connect-history-api-fallback": "^1.6.0",
-    "connect-injector": "^0.4.4",
-    "gaze": "^1.1.3",
-    "http-proxy": "^1.18.1",
-    "morgan": "~1.10.0",
-    "opener": "^1.5.1",
-    "parseurl": "^1.3.3",
-    "portfinder": "^1.0.28",
-    "serve-index": "^1.9.1",
-    "serve-static": "~1.14.1",
-    "spdy": "^4.0.2",
-    "strip-json-comments": "^3.1.1",
-    "ws": "^7.3.1"
   },
   "scripts": {
     "start": "./bin/badcert",
